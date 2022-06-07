@@ -30,7 +30,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, 1,1)
     viewer.add_object(o)
 
-    longeur = 100
+    longeur = 50
     largeur = 5
     m = Mesh()
     
