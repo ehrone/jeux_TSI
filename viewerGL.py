@@ -135,7 +135,7 @@ class ViewerGL:
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 1, 10])
         self.cam.transformation.rotation_euler[pyrr.euler.index().roll] = 0.4
-        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 2, 50])
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 2, 5])
 
 
     

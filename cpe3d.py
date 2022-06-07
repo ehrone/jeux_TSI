@@ -117,7 +117,7 @@ class Object3D(Object):
         # on fait avancer la platforme normaleent, on car on est pas encore au bout
         if self.x >= -self.longeur/2:
             self.transformation.translation +=\
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.longeur/2]))
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
             self.x += self.vel
         
         # on est arrivé en bout de platforme, donc on la fait réapparaitre derrière la deuxiéme

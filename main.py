@@ -30,7 +30,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, 1,1)
     viewer.add_object(o)
 
-    longeur = 50
+    longeur = 100
     largeur = 5
     m = Mesh()
     
@@ -43,7 +43,7 @@ def main():
     texture = glutils.load_texture('grass.jpg')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(), longeur, largeur)
     viewer.add_object(o)
-
+    
     """vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
     o = Text('Zebi le', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
