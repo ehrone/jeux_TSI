@@ -117,7 +117,6 @@ class Object3D(Object):
             self.transformation.translation +=\
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
             self.x += self.vel
-            print(self.x)
 
         else :
             self.transformation.translation +=\
