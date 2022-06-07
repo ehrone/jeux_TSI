@@ -29,34 +29,10 @@ class Object:
             GL.glDrawElements(GL.GL_TRIANGLES, 3*self.nb_triangle, GL.GL_UNSIGNED_INT, None)
             GL.glUseProgram(self.program)
 
-            
-
-class decors(Object):
-    def __init__(self, vao, nb_triangle, program, texture, transformation):
-        super().__init__(vao, nb_triangle, program, texture)
-        self.transformation = transformation 
-        self.vel = 2
-
-    def move(self):
-        # on modifit la position de l'objet du décord
-        self.transformation.translation =\
-        pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
-        # on va déplacer l'objet décors en visible 
-        # Récupère l'identifiant de la variable pour le programme courant
-        loc = GL.glGetUniformLocation(self.program, "position")
-        # Vérifie que la variable existe
-        if (loc == -1) :
-            print("Pas de variable uniforme : translation_model")
-        # Modifie la variable pour le programme courant
-        translation = self.transformation.translation
-        GL.glUniform4f(loc, translation.x, translation.y, translation.z, 0)
-
-
-
 
 
 class Object3D(Object):
-    def __init__(self, vao, nb_triangle, program, texture, transformation, longeur, largeur):
+    def __init__(self, vao, nb_triangle, program, texture, transformation, x,longeur, largeur):
         super().__init__(vao, nb_triangle, program, texture)
         self.transformation = transformation
         # booléen qui permet de faire sauter l'objet
@@ -71,7 +47,8 @@ class Object3D(Object):
         self.reactance = 0
         self.vel = -0.3
         #repop de la plateforme
-        self.x = 0
+        self.x = x
+        self.x_init = x
         self.z = 0
         self.longeur = longeur
         self.largeur = largeur
@@ -113,9 +90,9 @@ class Object3D(Object):
     
     def move(self):
         # on modifit la position de l'objet du décors pyrr.vecteur3d(le tableau)
-
+        print(self.x_init, self.x)
         # on fait avancer la platforme normaleent, on car on est pas encore au bout
-        if self.x >= -self.longeur/2:
+        if self.x >= -(self.x_init+self.longeur):
             self.transformation.translation +=\
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
             self.x += self.vel
@@ -123,8 +100,9 @@ class Object3D(Object):
         # on est arrivé en bout de platforme, donc on la fait réapparaitre derrière la deuxiéme
         else :
             self.transformation.translation +=\
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.longeur/2]))
-            self.x = 0
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.longeur]))
+            self.x = self.x_init
+            print(self.x_init,' fin objet ')
 
     def draw(self):
         GL.glUseProgram(self.program)

@@ -6,6 +6,29 @@ import numpy as np
 import OpenGL.GL as GL
 import pyrr
 
+def platforme(x,z,longeur, largeur, viewer, prog):
+    """ Cette fontion sert à génerer une platforme
+    PARAMETRES :
+        entrées :
+            x : le x autour duquel on centre la platforme
+            z : le z de depart de la platforme
+            largeur : largeur de la platforme
+            longeur : longeur de la platforme
+            viewer : objet de class viewer qui gère le monde
+    
+    """
+    m = Mesh()
+    p0, p1, p2, p3 = [-x+largeur, 0, z], [x-largeur, 0, z], [x-largeur, 0, z+longeur], [-x+largeur, 0, z+longeur]
+    n, c = [0, 1, 0], [1, 0, 0]
+    # les coordonnes de textures
+    t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
+    m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
+    m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
+    texture = glutils.load_texture('grass.jpg')
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), prog, texture, Transformation3D(),x, longeur, largeur)
+    viewer.add_object(o)
+
+
 def main():
     viewer = ViewerGL()
 
@@ -27,22 +50,36 @@ def main():
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, 1,1)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1)
     viewer.add_object(o)
 
-    longeur = 100
+    longeur = 50
     largeur = 5
+    # Première platforme
     m = Mesh()
-    
-    p0, p1, p2, p3 = [-largeur, 0, 0], [largeur, 0, 0], [largeur, 0, longeur], [-largeur, 0, longeur]
+    p0, p1, p2, p3 = [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur]
     n, c = [0, 1, 0], [1, 0, 0]
     # les coordonnes de textures
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
     texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(), longeur, largeur)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0, longeur, largeur)
     viewer.add_object(o)
+
+    # Deuxième platforme
+    #platforme(0,largeur+5,longeur,largeur, viewer,program3d_id)
+    m = Mesh()
+    p0, p1, p2, p3 = [-largeur, 0, longeur-2], [largeur, 0, longeur-2], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2]
+    n, c = [0, 1, 0], [1, 0, 0]
+    # les coordonnes de textures
+    t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
+    m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
+    m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
+    texture = glutils.load_texture('grass.jpg')
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id , texture, Transformation3D(),longeur, longeur, largeur)
+    viewer.add_object(o)
+   
     
     """vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
@@ -52,6 +89,8 @@ def main():
     viewer.add_object(o)"""
 
     viewer.run()
+
+
 
 
 if __name__ == '__main__':
