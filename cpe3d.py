@@ -90,10 +90,10 @@ class Object3D(Object):
     
     def move(self):
         # on modifit la position de l'objet du décors pyrr.vecteur3d(le tableau)
-        
+        # la variable qui indiquer a combien derriere le cube le tuile passée se met derrière l'actuelle
         seuil = 2
         # on fait avancer la platforme normaleent, on car on est pas encore au bout
-        if self.z >= -(self.longeur+2):
+        if self.z >= -(self.longeur+seuil):
             self.transformation.translation +=\
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
             self.z += self.vel
@@ -101,8 +101,11 @@ class Object3D(Object):
         
         # on est arrivé en bout de platforme, donc on la fait réapparaitre derrière la deuxiéme
         else :
+            # la dalle est maintenant derrière le cube, donc pour la mettre à la suite de la deuzième dalle 
+            # il faut translater de 2*longeur et il faut aussi prendre en compte le déplacemlent qui est continu
             self.transformation.translation +=\
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.longeur*2-self.vel]))
+            # on réinitialise la position de départ de la dale de sol
             self.z = self.longeur
             
 
