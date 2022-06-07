@@ -27,21 +27,21 @@ def main():
     tr.translation.z = -2
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr, 1,1)
     viewer.add_object(o)
 
-    longeur = 250
+    longeur = 500
     largeur = 5
     m = Mesh()
     
-    p0, p1, p2, p3 = [-largeur, 0, -longeur], [largeur, 0, -longeur], [largeur, 0, longeur], [-largeur, 0, longeur]
+    p0, p1, p2, p3 = [-largeur, 0, 0], [largeur, 0, 0], [largeur, 0, longeur], [-largeur, 0, longeur]
     n, c = [0, 1, 0], [1, 0, 0]
     # les coordonnes de textures
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
     texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D())
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(), longeur, largeur)
     viewer.add_object(o)
 
     """m = Mesh()

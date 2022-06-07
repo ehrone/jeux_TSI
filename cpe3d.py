@@ -1,6 +1,7 @@
 import OpenGL.GL as GL
 import pyrr, time
 import numpy as np 
+import sympy as s
 
 class Transformation3D: 
     def __init__(self, euler = pyrr.euler.create(), center = pyrr.Vector3(), translation = pyrr.Vector3()):
@@ -55,7 +56,7 @@ class decors(Object):
 
 
 class Object3D(Object):
-    def __init__(self, vao, nb_triangle, program, texture, transformation):
+    def __init__(self, vao, nb_triangle, program, texture, transformation, longeur, largeur):
         super().__init__(vao, nb_triangle, program, texture)
         self.transformation = transformation
         # booléen qui permet de faire sauter l'objet
@@ -69,6 +70,11 @@ class Object3D(Object):
         self.pesanteur = 0
         self.reactance = 0
         self.vel = -0.3
+        #repop de la plateforme
+        self.x = 0
+        self.z = 0
+        self.longeur = longeur
+        self.largeur = largeur
 
     def re_init_saut(self):
         # on vient de finir la phase de saut, on réinitialise le compteur
@@ -103,13 +109,20 @@ class Object3D(Object):
             # on applique la translation à l'objet
             self.transformation.translation +=\
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, delta, 0]))
-            time.sleep(0.2)
+            time.sleep(0.02)
     
     def move(self):
         # on modifit la position de l'objet du décors pyrr.vecteur3d(le tableau)
-        self.transformation.translation +=\
-        pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
-        
+        if self.x >= -self.longeur/2:
+            self.transformation.translation +=\
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
+            self.x += self.vel
+            print(self.x)
+
+        else :
+            self.transformation.translation +=\
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.longeur/2]))
+            self.x = 0
 
     def draw(self):
         GL.glUseProgram(self.program)
