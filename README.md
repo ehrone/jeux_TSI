@@ -1,5 +1,9 @@
 # jeux_TSI
 
+ATTENTION :
+
+
+
 Rapport v0 :
 
 C'est un jeu ou l'on incarne une bille et l'on doit avancer le plus loin possible
