@@ -46,7 +46,7 @@ class ViewerGL:
                 GL.glUseProgram(obj.program)
                 if isinstance(obj, Object3D):
                     # si on est pas le joueur on fait se déplacer l'objet (ce sont les obstacles qui se déplacent)
-                    if self.objs.index(obj) != 0 and self.objs.index(obj) != 1:
+                    if self.objs.index(obj) != 0 :
                         obj.move()
                     self.update_camera(obj.program)
                     # on appel la fonction de saut
@@ -143,7 +143,7 @@ class ViewerGL:
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 1, 10])
         self.cam.transformation.rotation_euler[pyrr.euler.index().roll] = 0.4
-        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-0.75, 2, 5])
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 2, 5])
 
 
     
