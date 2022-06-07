@@ -45,8 +45,8 @@ class ViewerGL:
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
                 if isinstance(obj, Object3D):
-                    # si on est pas le joueur on fait se déplacer l'objet ( c'est la décord qui bouge)
-                    if self.objs.index(obj) != 0:
+                    # si on est pas le joueur on fait se déplacer l'objet (ce sont les obstacles qui se déplacent)
+                    if self.objs.index(obj) != 0 and self.objs.index(obj) != 1:
                         obj.move()
                     self.update_camera(obj.program)
                     # on appel la fonction de saut
