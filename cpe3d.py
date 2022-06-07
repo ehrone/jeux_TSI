@@ -99,7 +99,6 @@ class Object3D(Object):
                 self.counter -=1
                 #print(' saut descente')
 
-            #print(self.forces)
             delta = self.forces + self.pesanteur+ self.reactance
             # on applique la translation à l'objet
             self.transformation.translation +=\

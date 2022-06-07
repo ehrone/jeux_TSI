@@ -105,24 +105,27 @@ class ViewerGL:
         if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.objs[0].transformation.translation += \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
-        """if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
+        if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation -= \
-                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02])) """
-        """if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
+                pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
+        if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
+            self.objs[0].transformation.translation += \
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0.02, 0, 0]))
+        if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
+            self.objs[0].transformation.translation += \
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([-0.02, 0, 0]))
+
+# si on veut controler la caméra avec IJKL
+        if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
             self.cam.transformation.rotation_euler[pyrr.euler.index().roll] -= 0.1
         if glfw.KEY_K in self.touch and self.touch[glfw.KEY_K] > 0:
             self.cam.transformation.rotation_euler[pyrr.euler.index().roll] += 0.1
         if glfw.KEY_J in self.touch and self.touch[glfw.KEY_J] > 0:
             self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
         if glfw.KEY_L in self.touch and self.touch[glfw.KEY_L] > 0:
-            self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1"""
+            self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
         #if glfw.KEY_SPACE in self.touch and self.touch[glfw.KEY_SPACE] > 0:
             #self.objs[0] c'est le dinausore
-
-        if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
-        if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
 
         # on rajoute le saut mais on fait un pfd avec la force de poussée qui va contre le poids, comme ça on crée une gravité et on fait juste varier la poussée
         if glfw.KEY_SPACE in self.touch and self.touch[glfw.KEY_SPACE ] > 0:
@@ -131,12 +134,14 @@ class ViewerGL:
 
         # ici on déplace la caméra vace l'objet, pour qu'elle le suive
         # on la fait tourner de autant que l'on fait tourner l'objet
+
         self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
         self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
         # on recentre la camera sur l'objet
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 1, 10])
+        self.cam.transformation.rotation_euler[pyrr.euler.index().roll] = 0.4
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-0.75, 2, 5])
-
 
 
     
