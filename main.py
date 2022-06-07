@@ -30,8 +30,10 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr)
     viewer.add_object(o)
 
+    longeur = 250
+    largeur = 5
     m = Mesh()
-    p0, p1, p2, p3 = [-25, 0, -25], [25, 0, -25], [25, 0, 25], [-25, 0, 25]
+    p0, p1, p2, p3 = [-largeur, 0, -longeur], [largeur, 0, -longeur], [largeur, 0, longeur], [-largeur, 0, longeur]
     n, c = [0, 1, 0], [1, 0, 0]
     # les coordonnes de textures
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]

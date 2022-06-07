@@ -106,10 +106,13 @@ class ViewerGL:
             self.objs[0].transformation.translation -= \
                 pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.02]))
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] -= 0.1
+            self.objs[0].transformation.translation += \
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0.02, 0, 0]))
         if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
-            self.objs[0].transformation.rotation_euler[pyrr.euler.index().yaw] += 0.1
+            self.objs[0].transformation.translation += \
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([-0.02, 0, 0]))
 
+# si on veut controler la caméra avec IJKL
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
             self.cam.transformation.rotation_euler[pyrr.euler.index().roll] -= 0.1
         if glfw.KEY_K in self.touch and self.touch[glfw.KEY_K] > 0:
@@ -131,10 +134,12 @@ class ViewerGL:
             #self.objs[0] c'est le dinausore
         # ici on déplace la caméra vace l'objet, pour qu'elle le suive
         # on la fait tourner de autant que l'on fait tourner l'objet
+
         self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
         self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
         # on recentre la camera sur l'objet
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
-        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-0.5, 2, 40])
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 1, 10])
+        self.cam.transformation.rotation_euler[pyrr.euler.index().roll] = 0.4
 
     
