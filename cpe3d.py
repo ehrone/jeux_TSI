@@ -19,12 +19,40 @@ class Object:
         self.texture = texture
         self.visible = True
 
+
     def draw(self):
         if self.visible : 
             GL.glUseProgram(self.program)
             GL.glBindVertexArray(self.vao)
             GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture)
             GL.glDrawElements(GL.GL_TRIANGLES, 3*self.nb_triangle, GL.GL_UNSIGNED_INT, None)
+            GL.glUseProgram(self.program)
+
+            
+
+class decors(Object):
+    def __init__(self, vao, nb_triangle, program, texture, transformation):
+        super().__init__(vao, nb_triangle, program, texture)
+        self.transformation = transformation 
+        self.vel = 2
+
+    def move(self):
+        # on modifit la position de l'objet du décord
+        self.transformation.translation =\
+        pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
+        # on va déplacer l'objet décors en visible 
+        # Récupère l'identifiant de la variable pour le programme courant
+        loc = GL.glGetUniformLocation(self.program, "position")
+        # Vérifie que la variable existe
+        if (loc == -1) :
+            print("Pas de variable uniforme : translation_model")
+        # Modifie la variable pour le programme courant
+        translation = self.transformation.translation
+        GL.glUniform4f(loc, translation.x, translation.y, translation.z, 0)
+
+
+
+
 
 class Object3D(Object):
     def __init__(self, vao, nb_triangle, program, texture, transformation):
@@ -40,6 +68,7 @@ class Object3D(Object):
         # les forces qui servent a simuler la gravité
         self.pesanteur = 0
         self.reactance = 0
+        self.vel = -0.3
 
     def re_init_saut(self):
         # on vient de finir la phase de saut, on réinitialise le compteur
@@ -70,18 +99,24 @@ class Object3D(Object):
                 self.counter -=1
                 #print(' saut descente')
 
-            print(self.forces)
+            #print(self.forces)
             delta = self.forces + self.pesanteur+ self.reactance
             # on applique la translation à l'objet
             self.transformation.translation +=\
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, delta, 0]))
             time.sleep(0.2)
-
+    
+    def move(self):
+        # on modifit la position de l'objet du décors pyrr.vecteur3d(le tableau)
+        self.transformation.translation +=\
+        pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
+        
 
     def draw(self):
         GL.glUseProgram(self.program)
         # Récupère l'identifiant de la variable pour le programme courant
         loc = GL.glGetUniformLocation(self.program, "translation_model")
+
         # Vérifie que la variable existe
         if (loc == -1) :
             print("Pas de variable uniforme : translation_model")
