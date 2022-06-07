@@ -1,7 +1,7 @@
 # jeux_TSI
 
 ATTENTION :
-
+Il faut installer la bibliothèque sympy (elle gère les dérivés)
 
 
 Rapport v0 :

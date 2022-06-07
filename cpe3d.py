@@ -31,6 +31,7 @@ class Object:
 
 
 
+
 class Object3D(Object):
     def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur):
         super().__init__(vao, nb_triangle, program, texture)
@@ -137,6 +138,24 @@ class Object3D(Object):
         GL.glUniformMatrix4fv(loc, 1, GL.GL_FALSE, rot)
 
         super().draw()
+
+
+# Cette classe est utilisé pou créer les obstacles
+class decors(Object3D):
+    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur):
+        super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur)
+        self.transformation = transformation 
+        self.vel = -0.3
+        self.x = 0
+        self.longeur = longeur
+        self.largeur = largeur
+
+    def move(self):
+        self.transformation.translation +=\
+        pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
+        self.x += self.vel
+
+
 
 class Camera:
     def __init__(self, transformation = Transformation3D(translation=pyrr.Vector3([0, 1, 0], dtype='float32')), projection = pyrr.matrix44.create_perspective_projection(60, 1, 0.01, 100)):

@@ -1,7 +1,7 @@
 from viewerGL import ViewerGL
 import glutils
 from mesh import Mesh
-from cpe3d import Object3D, Camera, Transformation3D, Text
+from cpe3d import Object3D, Camera, Transformation3D, Text, decors
 import numpy as np
 import OpenGL.GL as GL
 import pyrr
@@ -63,11 +63,8 @@ def main():
 
     longeur = 20
     largeur = 5
+
     # Première platforme
-
-    #platforme(0,0, longeur, largeur,viewer,program3d_id)
-
-
     m = Mesh()
     p0, p1, p2, p3 = [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur]
     n, c = [0, 1, 0], [1, 0, 0]
@@ -80,8 +77,6 @@ def main():
     viewer.add_object(o)
 
     # Deuxième platforme
-
-    #platforme(0,largeur+5,longeur,largeur, viewer,program3d_id)
     m = Mesh()
     p0, p1, p2, p3 = [-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2]
     n, c = [0, 1, 0], [1, 0, 0]
@@ -90,9 +85,21 @@ def main():
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
     texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id , texture, Transformation3D(),longeur, longeur, largeur)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur)
     viewer.add_object(o)
 
+    
+    # creation d'un obstacle
+    m = Mesh()
+    p0, p1, p2, p3 = [-largeur, 0, 30], [largeur/4, 0, 30], [largeur/4, 2, 30], [-largeur, 2, 30]
+    n, c = [0, 1, 0], [1, 1, 1]
+    # les coordonnes de textures
+    t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
+    m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
+    m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
+    texture = glutils.load_texture('grass.jpg')
+    obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0,0,0)
+    viewer.add_object(obstacle) 
 
     viewer.run()
 
