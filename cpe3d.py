@@ -32,7 +32,7 @@ class Object:
 
 
 class Object3D(Object):
-    def __init__(self, vao, nb_triangle, program, texture, transformation, x,longeur, largeur):
+    def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur):
         super().__init__(vao, nb_triangle, program, texture)
         self.transformation = transformation
         # booléen qui permet de faire sauter l'objet
@@ -47,9 +47,8 @@ class Object3D(Object):
         self.reactance = 0
         self.vel = -0.3
         #repop de la plateforme
-        self.x = x
-        self.x_init = x
-        self.z = 0
+        self.z = z
+        self.z_init = z
         self.longeur = longeur
         self.largeur = largeur
 
@@ -90,19 +89,19 @@ class Object3D(Object):
     
     def move(self):
         # on modifit la position de l'objet du décors pyrr.vecteur3d(le tableau)
-        print(self.x_init, self.x)
+        print(self.z_init, self.z)
         # on fait avancer la platforme normaleent, on car on est pas encore au bout
-        if self.x >= -(self.x_init+self.longeur):
+        if self.z >= -(self.z_init+self.longeur+1):
             self.transformation.translation +=\
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
-            self.x += self.vel
+            self.z += self.vel
         
         # on est arrivé en bout de platforme, donc on la fait réapparaitre derrière la deuxiéme
         else :
             self.transformation.translation +=\
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.longeur]))
-            self.x = self.x_init
-            print(self.x_init,' fin objet ')
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.longeur+1+self.vel]))
+            self.z = self.z_init
+            print(self.z_init,' fin objet ')
 
     def draw(self):
         GL.glUseProgram(self.program)
