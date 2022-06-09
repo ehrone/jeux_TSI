@@ -20,7 +20,6 @@ class Object:
         self.texture = texture
         self.visible = True
 
-
     def draw(self):
         if self.visible : 
             GL.glUseProgram(self.program)
@@ -28,8 +27,6 @@ class Object:
             GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture)
             GL.glDrawElements(GL.GL_TRIANGLES, 3*self.nb_triangle, GL.GL_UNSIGNED_INT, None)
             GL.glUseProgram(self.program)
-
-
 
 
 class Object3D(Object):
@@ -53,6 +50,13 @@ class Object3D(Object):
         #self.z = 0
         self.longeur = longeur
         self.largeur = largeur
+        # les variables et listes pour la gestion de collisions 
+        #self.hitbox = [p0, p1, p2, p3]
+
+    def detection_collision(self, obj):
+        #""" Cette fonction détecte une collision entre l'objet et obj """
+        pass
+
 
     def re_init_saut(self):
         # on vient de finir la phase de saut, on réinitialise le compteur
@@ -109,7 +113,6 @@ class Object3D(Object):
             # on réinitialise la position de départ de la dale de sol
             self.z = self.longeur
             
-
     def draw(self):
         GL.glUseProgram(self.program)
         # Récupère l'identifiant de la variable pour le programme courant
@@ -146,14 +149,20 @@ class decors(Object3D):
         super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur)
         self.transformation = transformation 
         self.vel = -0.3
-        self.x = 0
+        self.z = 0
         self.longeur = longeur
         self.largeur = largeur
+        self.hitbox =[]
+        
 
     def move(self):
         self.transformation.translation +=\
         pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
-        self.x += self.vel
+        self.z += self.vel
+        # on update la hitbox de l'objet 
+        for point in self.hitbox:
+            # on n'update que le z car l'objet ne se déplace que sur celui-ci pour le moment
+            point[2] = point[2] +self.vel
 
 
 

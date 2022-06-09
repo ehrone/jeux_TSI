@@ -61,7 +61,7 @@ def main():
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1)
     viewer.add_object(o)
 
-    longeur = 20
+    longeur = 100
     largeur = 5
 
     # Première platforme
