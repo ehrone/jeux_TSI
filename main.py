@@ -57,8 +57,8 @@ def main():
     tr.translation.z = 0
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('grass.jpg')
-    points= [ [0,0,0], [1,0,0], [1,0,1], [0,0,1], [0,1,0], [1,1,0], [1,1,1], [0,1,1]]
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1, points)
+    points_obj= [ [0,0,0], [-1,0,0], [-1,0,1], [0,0,1], [0,1,0], [-1,1,0], [-1,1,1], [0,1,1]]
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1, points_obj)
     viewer.add_object(o)
 
     longeur = 50
@@ -95,12 +95,12 @@ def main():
     # on recupere les coordonnées de notre rectangle
     m = Mesh.load_obj('obstacle.obj')
     #m.normalize()
-    #m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 1]))
+    m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 1]))
     tr = Transformation3D()
     tr.translation.x = 0
     tr.translation.y = 0
     tr.translation.z = 5
-    #tr.rotation_center.z = 0.5
+    tr.rotation_center.z = 0
     texture = glutils.load_texture('grass.jpg')
     """m = Mesh()
     p0, p1, p2, p3 = [-largeur, 0, 0.5], [largeur/4, 0, 0.5], [largeur/4, 2, 0.5], [-largeur, 2, 0.5]
@@ -110,8 +110,16 @@ def main():
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)"""
     texture = glutils.load_texture('mur.jpg')
-    points= [[-largeur, 0, 0.5], [largeur/4, 0, 0.5], [largeur/4, 2, 0.5], [-largeur, 2, 0.5], [-largeur, 0, 0.5], [largeur/4, 0, 0.5], [largeur/4, 2, 0.5], [-largeur, 2, 0.5]]
-    obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, points)
+    p =[0,0,0,0,0,0,0,0]
+    p[0] =[tr.translation.x , tr.translation.y , tr.translation.z]
+    p[1] =[-2+tr.translation.x  ,tr.translation.y, tr.translation.z ]
+    p[2] =[-2+tr.translation.x, tr.translation.y ,tr.translation.z ]
+    p[3] =[tr.translation.x, tr.translation.y, 1+tr.translation.z ]
+    p[4]=[tr.translation.x ,1+tr.translation.y ,tr.translation.z ]
+    p[5] =[-2+tr.translation.x, 1+tr.translation.y ,tr.translation.z ]
+    p[6] =[-2+tr.translation.x, 1+tr.translation.y, 1+tr.translation.z ]
+    p[7] =[0+tr.translation.x,1+tr.translation.y, 1+tr.translation.z ]
+    obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, p)
     viewer.add_object(obstacle) 
 
     viewer.run()

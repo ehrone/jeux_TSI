@@ -32,6 +32,7 @@ class Object:
 
 
 
+
 class Object3D(Object):
     def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur, points):
         super().__init__(vao, nb_triangle, program, texture)
@@ -79,32 +80,18 @@ class Object3D(Object):
         
         x_obstacle = [hitbox_obstacle[0][0], hitbox_obstacle[1][0]]
         y_obstacle = [hitbox_obstacle[0][1], hitbox_obstacle[4][1]]
-        z_obstacle = [hitbox_obstacle[0][2], hitbox_obstacle[3][2]]
+        z_obstacle = [hitbox_obstacle[0][2], hitbox_obstacle[2][2]]
 
         print(' joueur : ', z)
         print(' obstacle : ', z_obstacle)
-
         for i in range(len(x)):
-            if x[i] >= x_obstacle[0] and x[i] <= x_obstacle[1]:# on regarde si il y a collision sur les x
-                #print("Un coin au sol est sur les x de l'obstacle ")
+            if (x[i] >= x_obstacle[0] and x[i]<= x_obstacle[1]) or (x[i] <= x_obstacle[0] and x[i]>= x_obstacle[1]) :# on regarde si il y a collision sur les x
+                #print(" coin {} sur l'obstacle ".format(i))
 
-                for j in range( len(z)) :
-                    if z[i] >=z_obstacle[0]  and z[i]<= z_obstacle[1] : # on regarde si il y a collision dur les z
-                        print("Un coin au sol est sur les z de l'obstacle ")
-                        for k in range(len(y)):
-                            if y[k] in y_obstacle :
-                                #print("Un coin est dans les y de l'obstacle ")
-                                print('collision')
-                            else :
-                                #print('pas les memes y')
-                                pass
+                for j in range(len(z)):
+                    if z[i]>= z_obstacle[0] and z[i]<= z_obstacle[0]:
+                        print(" coin {} sur z obstacle ".format(j))
 
-                    else :
-                        #print('pas les memes z')
-                        pass
-            else :
-                #print('pas les memes x /n /n')
-                pass
 
 
 
@@ -162,7 +149,6 @@ class Object3D(Object):
             # on réinitialise la position de départ de la dale de sol
             self.z = self.longeur
             
-
     def draw(self):
         GL.glUseProgram(self.program)
         # Récupère l'identifiant de la variable pour le programme courant
@@ -207,8 +193,6 @@ class decors(Object3D):
         self.transformation.translation +=\
         pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
         self.x += self.vel
-
-
 
 class Camera:
     def __init__(self, transformation = Transformation3D(translation=pyrr.Vector3([0, 1, 0], dtype='float32')), projection = pyrr.matrix44.create_perspective_projection(60, 1, 0.01, 100)):

@@ -47,9 +47,9 @@ class ViewerGL:
                 if isinstance(obj, Object3D):
                     # si on est pas le joueur on fait se déplacer l'objet (ce sont les obstacles qui se déplacent)
                     if self.objs.index(obj) != 0 :
-                        pass
+                        #pass
                         #obj.move()
-                        #self.objs[0].collision(obj)
+                        self.objs[0].collision(obj)
                     
                     self.update_camera(obj.program)
                     # on appel la fonction de saut
@@ -108,9 +108,17 @@ class ViewerGL:
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
             self.objs[0].transformation.translation += \
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0.1, 0, 0]))
-        if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
+        elif glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
             self.objs[0].transformation.translation += \
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([-0.1, 0, 0]))
+        
+        elif glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
+            self.objs[0].transformation.translation += \
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.03]))
+        
+        elif glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
+            self.objs[0].transformation.translation += \
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, -0.03]))
 
 # si on veut controler la caméra avec IJKL
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
@@ -138,7 +146,7 @@ class ViewerGL:
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 1, 10])
         self.cam.transformation.rotation_euler[pyrr.euler.index().roll] = 0.4
-        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 2, 5])
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 2, 5])
 
 
     
