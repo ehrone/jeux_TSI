@@ -47,9 +47,9 @@ class ViewerGL:
                 if isinstance(obj, Object3D):
                     # si on est pas le joueur on fait se déplacer l'objet (ce sont les obstacles qui se déplacent)
                     if self.objs.index(obj) != 0 :
-                        #pass
+                        pass
                         #obj.move()
-                        self.objs[0].collision(obj)
+                        #self.objs[0].collision(obj)
                     
                     self.update_camera(obj.program)
                     # on appel la fonction de saut

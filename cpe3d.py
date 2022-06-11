@@ -73,31 +73,38 @@ class Object3D(Object):
 
         hitbox_obstacle = obj.hitbox
 
-        x = [self.hitbox[0][0], self.hitbox[1][0], self.hitbox[2][0], self.hitbox[3][0]] 
-        y = [self.hitbox[4][1], self.hitbox[5][1], self.hitbox[6][1], self.hitbox[7][1], 0]
-        z = [self.hitbox[4][2], self.hitbox[5][2], self.hitbox[6][2], self.hitbox[7][2]]
+        x = [self.hitbox[0][0], self.hitbox[1][0]] 
+        y = [self.hitbox[0][1], self.hitbox[4][1]]
+        z = [self.hitbox[0][2], self.hitbox[3][2]]
         
-        x_obstacle = [hitbox_obstacle[0][0], hitbox_obstacle[1][0], hitbox_obstacle[2][0], hitbox_obstacle[1][0]]
-        y_obstacle = [hitbox_obstacle[4][1], hitbox_obstacle[5][1], hitbox_obstacle[6][1], hitbox_obstacle[7][1]]
-        z_obstacle = [hitbox_obstacle[4][2], hitbox_obstacle[5][2], hitbox_obstacle[6][2], hitbox_obstacle[7][2]]
+        x_obstacle = [hitbox_obstacle[0][0], hitbox_obstacle[1][0]]
+        y_obstacle = [hitbox_obstacle[0][1], hitbox_obstacle[4][1]]
+        z_obstacle = [hitbox_obstacle[0][2], hitbox_obstacle[3][2], ]
+
+        print(' joueur : ', z)
+        print(' obstacle : ', z_obstacle)
 
         for i in range(len(x)):
-            if x[i] in x_obstacle:# on regarde si il y a collision sur les x
-                print("Un coin au sol est sur les x de l'obstacle ")
+            if x[i] >= x_obstacle[0] and x[i] <= x_obstacle[1]:# on regarde si il y a collision sur les x
+                #print("Un coin au sol est sur les x de l'obstacle ")
 
                 for j in range( len(z)) :
-                    if z[i] in z_obstacle : # on regarde si il y a collision dur les z
+                    if z[i] >=z_obstacle[0]  and z[i]<= z_obstacle[1] : # on regarde si il y a collision dur les z
                         print("Un coin au sol est sur les z de l'obstacle ")
                         for k in range(len(y)):
                             if y[k] in y_obstacle :
-                                print("Un coin est dans les y de l'obstacle ")
+                                #print("Un coin est dans les y de l'obstacle ")
                                 print('collision')
                             else :
-                                print('pas les memes y')
+                                #print('pas les memes y')
+                                pass
+
                     else :
-                        print('pas les memes z')
+                        #print('pas les memes z')
+                        pass
             else :
-                print('pas les memes x /n /n')
+                #print('pas les memes x /n /n')
+                pass
 
 
 
