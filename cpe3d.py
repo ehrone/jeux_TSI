@@ -79,7 +79,7 @@ class Object3D(Object):
         
         x_obstacle = [hitbox_obstacle[0][0], hitbox_obstacle[1][0]]
         y_obstacle = [hitbox_obstacle[0][1], hitbox_obstacle[4][1]]
-        z_obstacle = [hitbox_obstacle[0][2], hitbox_obstacle[3][2], ]
+        z_obstacle = [hitbox_obstacle[0][2], hitbox_obstacle[3][2]]
 
         print(' joueur : ', z)
         print(' obstacle : ', z_obstacle)
