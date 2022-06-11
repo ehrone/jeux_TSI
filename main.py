@@ -58,7 +58,7 @@ def main():
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('grass.jpg')
     points_obj= [ [0,0,0], [-1,0,0], [-1,0,1], [0,0,1], [0,1,0], [-1,1,0], [-1,1,1], [0,1,1]]
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1, points_obj)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1, points_obj, [0,0,0])
     viewer.add_object(o)
 
     longeur = 50
@@ -74,7 +74,7 @@ def main():
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
     texture = glutils.load_texture('grass.jpg')
     points= [ [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur], [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur]]
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0, longeur, largeur, points)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0, longeur, largeur, points, [0,0,0])
     viewer.add_object(o)
 
     # Deuxième platforme
@@ -87,7 +87,7 @@ def main():
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
     texture = glutils.load_texture('grass.jpg')
     points= [[-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2], [-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2]]
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur, points)
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur, points, [0,0,0])
     viewer.add_object(o)
 
     
@@ -116,11 +116,21 @@ def main():
     p[2] =[-2+tr.translation.x, tr.translation.y ,tr.translation.z ]
     p[3] =[tr.translation.x, tr.translation.y, 1+tr.translation.z ]
     p[4]=[tr.translation.x ,1+tr.translation.y ,tr.translation.z ]
-    p[5] =[-2+tr.translation.x, 1+tr.translation.y ,tr.translation.z ]
+    p[5] =[-2+tr.translation.x, 1+tr.translation.y ,tr.translation.z]
     p[6] =[-2+tr.translation.x, 1+tr.translation.y, 1+tr.translation.z ]
     p[7] =[0+tr.translation.x,1+tr.translation.y, 1+tr.translation.z ]
-    obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, p)
+    obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, p, [0,0,0])
     viewer.add_object(obstacle) 
+
+
+
+    vao = Text.initalize_geometry()
+    texture = glutils.load_texture('fontB.jpg')
+    o = Text('Zebi le', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
+    viewer.add_object(o)
+    o = Text('Dinosaure', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+    viewer.add_object(o)
+
 
     viewer.run()
 

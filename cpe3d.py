@@ -34,7 +34,7 @@ class Object:
 
 
 class Object3D(Object):
-    def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur, points):
+    def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur, points, centre):
         super().__init__(vao, nb_triangle, program, texture)
         self.transformation = transformation
         # booléen qui permet de faire sauter l'objet
@@ -57,6 +57,10 @@ class Object3D(Object):
 
         self.__points = points
         self.hitbox = [[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]]
+        self.centre = centre
+
+    def update_center(self):
+        self.centre = [self.transformation.x, self.transformation.y, self.transformation.z]
 
     def update_hitbox(self):
         i=0
@@ -71,16 +75,14 @@ class Object3D(Object):
         # on update les hitboxs
         obj.update_hitbox()
         self.update_hitbox()
+        self.update_center()
 
         hitbox_obstacle = obj.hitbox
 
-        x = [self.hitbox[0][0], self.hitbox[1][0]] 
-        y = [self.hitbox[0][1], self.hitbox[4][1]]
-        z = [self.hitbox[0][2], self.hitbox[3][2]]
         
         x_obstacle = [hitbox_obstacle[0][0], hitbox_obstacle[1][0]]
         y_obstacle = [hitbox_obstacle[0][1], hitbox_obstacle[4][1]]
-        z_obstacle = [hitbox_obstacle[0][2], hitbox_obstacle[2][2]]
+        z_obstacle = [hitbox_obstacle[0][2], hitbox_obstacle[3][2]]
 
         print(' joueur : ', z)
         print(' obstacle : ', z_obstacle)
@@ -181,8 +183,8 @@ class Object3D(Object):
 
 # Cette classe est utilisé pou créer les obstacles
 class decors(Object3D):
-    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur, points):
-        super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur,points)
+    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur, points, centre):
+        super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur,points, centre)
         self.transformation = transformation 
         self.vel = -0.3
         self.x = 0

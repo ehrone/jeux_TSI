@@ -47,9 +47,9 @@ class ViewerGL:
                 if isinstance(obj, Object3D):
                     # si on est pas le joueur on fait se déplacer l'objet (ce sont les obstacles qui se déplacent)
                     if self.objs.index(obj) != 0 :
-                        #pass
+                        pass
                         #obj.move()
-                        self.objs[0].collision(obj)
+                        #self.objs[0].collision(obj)
                     
                     self.update_camera(obj.program)
                     # on appel la fonction de saut
@@ -114,11 +114,11 @@ class ViewerGL:
         
         elif glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.objs[0].transformation.translation += \
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.03]))
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.1]))
         
         elif glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation += \
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, -0.03]))
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, -0.1]))
 
 # si on veut controler la caméra avec IJKL
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
