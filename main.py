@@ -52,16 +52,17 @@ def main():
     # on recupere les coordonnées de notre cube
     m = Mesh.load_obj('cube.obj')
     #m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 1]))
+    m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 1]))
     tr = Transformation3D()
     tr.translation.y = -np.amin(m.vertices, axis=0)[1]
-    tr.translation.z = -2
+    tr.translation.z = 0
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1)
+    points= [ [0,0,0], [1,0,0], [1,0,1], [0,0,1], [0,1,0], [1,1,0], [1,1,1], [0,1,1]]
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1, points)
     viewer.add_object(o)
 
-    longeur = 20
+    longeur = 50
     largeur = 5
 
     # Première platforme
@@ -73,7 +74,8 @@ def main():
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
     texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0, longeur, largeur)
+    points= [ [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur], [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur]]
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0, longeur, largeur, points)
     viewer.add_object(o)
 
     # Deuxième platforme
@@ -85,20 +87,32 @@ def main():
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
     texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur)
+    points= [[-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2], [-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2]]
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur, points)
     viewer.add_object(o)
 
     
-    # creation d'un obstacle
-    m = Mesh()
+    # creation d'un obstacle DEMANDER A MAT COM%MENT IL PLACE SON OBJET
+    # on recupere les coordonnées de notre cube
+    m = Mesh.load_obj('obstacle.obj')
+    #m.normalize()
+    m.apply_matrix(pyrr.matrix44.create_from_scale([2, 2, 2, 2]))
+    tr = Transformation3D()
+    tr.translation.x = 0
+    tr.translation.y = 0
+    tr.translation.z = 0
+    tr.rotation_center.z = 0.5
+    texture = glutils.load_texture('grass.jpg')
+    """m = Mesh()
     p0, p1, p2, p3 = [-largeur, 0, 30], [largeur/4, 0, 30], [largeur/4, 2, 30], [-largeur, 2, 30]
-    n, c = [0, 1, 0], [1, 1, 1]
-    # les coordonnes de textures
+    n, c = [0, 1, 0], [1, 1, 1]"""
+    """# les coordonnes de textures
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-    texture = glutils.load_texture('grass.jpg')
-    obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0,0,0)
+    texture = glutils.load_texture('mur.jpg')"""
+    points= [[0,0,0], [2,0,0], [2,0,1], [0,0,1], [0,1,0], [2,1,0], [2,1,1], [0,1,1]]
+    obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0,0,0, points)
     viewer.add_object(obstacle) 
 
     viewer.run()

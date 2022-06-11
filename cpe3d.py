@@ -33,7 +33,7 @@ class Object:
 
 
 class Object3D(Object):
-    def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur):
+    def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur, points):
         super().__init__(vao, nb_triangle, program, texture)
         self.transformation = transformation
         # booléen qui permet de faire sauter l'objet
@@ -54,11 +54,58 @@ class Object3D(Object):
         self.longeur = longeur
         self.largeur = largeur
 
+        self.__points = points
+        self.hitbox = [[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]]
+
+    def update_hitbox(self):
+        i=0
+        for point in self.__points:
+            x = self.transformation.translation.x + point[0]
+            y = self.transformation.translation.y + point[1]
+            z = self.transformation.translation.z + point[2]
+            self.hitbox[i] = [x, y, z]
+            i +=1
+
+    def collision(self, obj):
+        # on update les hitboxs
+        obj.update_hitbox()
+        self.update_hitbox()
+
+        hitbox_obstacle = obj.hitbox
+
+        x = [self.hitbox[0][0], self.hitbox[1][0], self.hitbox[2][0], self.hitbox[3][0]] 
+        y = [self.hitbox[4][1], self.hitbox[5][1], self.hitbox[6][1], self.hitbox[7][1], 0]
+        z = [self.hitbox[4][2], self.hitbox[5][2], self.hitbox[6][2], self.hitbox[7][2]]
+        
+        x_obstacle = [hitbox_obstacle[0][0], hitbox_obstacle[1][0], hitbox_obstacle[2][0], hitbox_obstacle[1][0]]
+        y_obstacle = [hitbox_obstacle[4][1], hitbox_obstacle[5][1], hitbox_obstacle[6][1], hitbox_obstacle[7][1]]
+        z_obstacle = [hitbox_obstacle[4][2], hitbox_obstacle[5][2], hitbox_obstacle[6][2], hitbox_obstacle[7][2]]
+
+        for i in range(len(x)):
+            if x[i] in x_obstacle:# on regarde si il y a collision sur les x
+                print("Un coin au sol est sur les x de l'obstacle ")
+
+                for j in range( len(z)) :
+                    if z[i] in z_obstacle : # on regarde si il y a collision dur les z
+                        print("Un coin au sol est sur les z de l'obstacle ")
+                        for k in range(len(y)):
+                            if y[k] in y_obstacle :
+                                print("Un coin est dans les y de l'obstacle ")
+                                print('collision')
+                            else :
+                                print('pas les memes y')
+                    else :
+                        print('pas les memes z')
+            else :
+                print('pas les memes x /n /n')
+
+
+
     def re_init_saut(self):
         # on vient de finir la phase de saut, on réinitialise le compteur
         if self.saut== False:
             self.counter = 2
-            self.forces = 0
+            self.forces = 0 
 
     def action_saut(self):
         if self.saut == True :
@@ -99,7 +146,6 @@ class Object3D(Object):
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
             self.z += self.vel
         
-       
         # on est arrivé en bout de platforme, donc on la fait réapparaitre derrière la deuxiéme
         else :
             # la dalle est maintenant derrière le cube, donc pour la mettre à la suite de la deuzième dalle 
@@ -142,8 +188,8 @@ class Object3D(Object):
 
 # Cette classe est utilisé pou créer les obstacles
 class decors(Object3D):
-    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur):
-        super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur)
+    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur, points):
+        super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur,points)
         self.transformation = transformation 
         self.vel = -0.3
         self.x = 0
