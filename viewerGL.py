@@ -75,8 +75,13 @@ class ViewerGL:
                 GL.glUseProgram(obj.program)
                 if isinstance(obj, Object3D):
                     self.update_camera(obj.program)
-                    obj.move()
-                    self.objs[0].collision(obj, self.obs.index(obj))
+                    vie = obj.move()
+                    if vie == -1:
+                        self.obs.pop(0)
+                        print('obstacle hors liste ')
+
+                    else:
+                        self.objs[0].collision(obj, self.obs.index(obj))
                     #avec un if    obj.pop()  # ici on test si on est derriere le joueur pour retirer l'obstacle de la liste
                 obj.draw()
                 
@@ -188,7 +193,7 @@ class ViewerGL:
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 10])
         self.cam.transformation.rotation_euler[pyrr.euler.index().roll] = 0.4
-        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 2, 5])
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 2, 10])
 
     ### Invocation des murs adverse
     # On avance selon z

@@ -176,9 +176,6 @@ class decors(Object3D):
         super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur, centre )
         self.transformation = transformation 
         self.vel = -0.3
-        self.x = 0
-        self.longeur = longeur
-        self.largeur = largeur
 
         self.delta_x = -2
         self.delta_y =1
@@ -187,8 +184,9 @@ class decors(Object3D):
     def move(self):
         self.transformation.translation +=\
         pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
-        self.x += self.vel
-        # return if self.x < HITBOX
+        self.z += self.vel
+        if self.z < -10 :
+            return -1
 
 
 
