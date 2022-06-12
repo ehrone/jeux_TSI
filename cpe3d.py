@@ -51,16 +51,6 @@ class Object3D(Object):
         self.longeur = longeur
         self.largeur = largeur
         # les variables et listes pour la gestion de collisions 
-        #self.hitbox = [p0, p1, p2, p3]
-
-    def detection_collision(self, obj):
-        #""" Cette fonction détecte une collision entre l'objet et obj """
-        pass
-
-
-        self.__points = points
-        self.hitbox = [[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]]
-        self.centre = centre
         self.delta_x = -1
         self.delta_y = 1
         self.delta_z = 1
@@ -198,15 +188,11 @@ class decors(Object3D):
         self.delta_y =1
         self.delta_z = 1
 
-
     def move(self):
         self.transformation.translation +=\
         pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
         self.z += self.vel
-        # on update la hitbox de l'objet 
-        for point in self.hitbox:
-            # on n'update que le z car l'objet ne se déplace que sur celui-ci pour le moment
-            point[2] = point[2] +self.vel
+      
 
 class Camera:
     def __init__(self, transformation = Transformation3D(translation=pyrr.Vector3([0, 1, 0], dtype='float32')), projection = pyrr.matrix44.create_perspective_projection(60, 1, 0.01, 100)):
