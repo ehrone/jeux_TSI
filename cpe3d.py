@@ -33,7 +33,7 @@ class Object:
 
 
 class Object3D(Object):
-    def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur, points):
+    def __init__(self, vao, nb_triangle, program, texture, transformation, z,longeur, largeur, centre):
         super().__init__(vao, nb_triangle, program, texture)
         self.transformation = transformation
         # booléen qui permet de faire sauter l'objet
@@ -53,60 +53,37 @@ class Object3D(Object):
         #self.z = 0
         self.longeur = longeur
         self.largeur = largeur
+        self.centre =  centre
 
-        self.__points = points
-        self.hitbox = [[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]]
+        self.delta_x = -1
+        self.delta_y = 1
+        self.delta_z = 1
+      
 
-    def update_hitbox(self):
-        i=0
-        for point in self.__points:
-            x = self.transformation.translation.x + point[0]
-            y = self.transformation.translation.y + point[1]
-            z = self.transformation.translation.z + point[2]
-            self.hitbox[i] = [x, y, z]
-            i +=1
+    def update_center(self):
+        self.centre = [self.transformation.translation.x, self.transformation.translation.y, self.transformation.translation.z]
 
-    def collision(self, obj):
-        # on update les hitboxs
-        obj.update_hitbox()
-        self.update_hitbox()
-
-        hitbox_obstacle = obj.hitbox
-
-        x = [self.hitbox[0][0], self.hitbox[1][0]] 
-        y = [self.hitbox[0][1], self.hitbox[4][1]]
-        z = [self.hitbox[0][2], self.hitbox[3][2]] ## On avance selon z
+    def collision(self, obj, index):
+     
+        obj.update_center()
+        self.update_center()
         
-        x_obstacle = [hitbox_obstacle[0][0], hitbox_obstacle[1][0]]
-        y_obstacle = [hitbox_obstacle[0][1], hitbox_obstacle[4][1]]
-        z_obstacle = [hitbox_obstacle[0][2], hitbox_obstacle[3][2]]
+        x = [self.centre[0], self.centre[0]+self.delta_x]
+        y = [self.centre[1], self.centre[1]+self.delta_y] # 0 : point bas , 1 : point haut
+        z = [self.centre[2], self.centre[2]+self.delta_z] # 0 : point arrière, 1 : point avant
 
-        print(' joueur : ', z)
-        print(' obstacle : ', z_obstacle)
+        x_obstacle = [obj.centre[0], obj.centre[0]+obj.delta_x]
+        y_obstacle = [obj.centre[1], obj.centre[1]+obj.delta_y]
+        z_obstacle = [obj.centre[2], obj.centre[2]+obj.delta_z]
 
-        for i in range(len(x)):
-            if x[i] >= x_obstacle[0] and x[i] <= x_obstacle[1]:# on regarde si il y a collision sur les x
-                #print("Un coin au sol est sur les x de l'obstacle ")
-
-                for j in range( len(z)) :
-                    if z[i] >=z_obstacle[0]  and z[i]<= z_obstacle[1] : # on regarde si il y a collision dur les z
-                        print("Un coin au sol est sur les z de l'obstacle ")
-                        for k in range(len(y)):
-                            if y[k] in y_obstacle :
-                                #print("Un coin est dans les y de l'obstacle ")
-                                print('collision')
-                            else :
-                                #print('pas les memes y')
-                                pass
-
-                    else :
-                        #print('pas les memes z')
-                        pass
-            else :
-                #print('pas les memes x /n /n')
-                pass
-
-
+        #print(' joueur : ', x)
+        #print(' obstacle {} : '.format(index), x_obstacle)
+        
+        if (x[0] >= x_obstacle[0] and x[0]<= x_obstacle[1]) or (x[0] <= x_obstacle[0] and x[0]>= x_obstacle[1]) or (x[1] >= x_obstacle[0] and x[1]<= x_obstacle[1]) or (x[1] <= x_obstacle[0] and x[1]>= x_obstacle[1]) :# on regarde si il y a collision sur les x
+            #print(" coin : x sur l'obstacle ")
+            if (float(z[0])>= z_obstacle[0] and z[0]<= z_obstacle[1]) or (z[1]>= z_obstacle[0] and z[1]<= z_obstacle[1]) :
+                print(" collision ")
+                
 
     def re_init_saut(self):
         # on vient de finir la phase de saut, on réinitialise le compteur
@@ -195,13 +172,17 @@ class Object3D(Object):
 
 # Cette classe est utilisé pou créer les obstacles
 class decors(Object3D):
-    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur, points):
-        super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur,points)
+    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur, centre):
+        super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur, centre )
         self.transformation = transformation 
         self.vel = -0.3
         self.x = 0
         self.longeur = longeur
         self.largeur = largeur
+
+        self.delta_x = -2
+        self.delta_y =1
+        self.delta_z = 1
 
     def move(self):
         self.transformation.translation +=\

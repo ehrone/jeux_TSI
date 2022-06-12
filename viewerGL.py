@@ -57,17 +57,15 @@ class ViewerGL:
             if d1 - temps_init > dlt:
                 self.invocation()
                 temps_init = time.time()
-
             self.update_key()
-
             for obj in self.objs:
                 GL.glUseProgram(obj.program)
                 if isinstance(obj, Object3D):
                     # si on est pas le joueur on fait se déplacer l'objet (ce sont les obstacles qui se déplacent)
                     if self.objs.index(obj) != 0 :
                         obj.move()
-                        #self.objs[0].collision(obj)
-                    
+                        #pass
+                            
                     self.update_camera(obj.program)
                     # on appel la fonction de saut
                     obj.action_saut()
@@ -78,6 +76,7 @@ class ViewerGL:
                 if isinstance(obj, Object3D):
                     self.update_camera(obj.program)
                     obj.move()
+                    self.objs[0].collision(obj, self.obs.index(obj))
                     #avec un if    obj.pop()  # ici on test si on est derriere le joueur pour retirer l'obstacle de la liste
                 obj.draw()
                 
@@ -187,9 +186,9 @@ class ViewerGL:
         self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
         # on recentre la camera sur l'objet
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
-        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 1, 10])
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 10])
         self.cam.transformation.rotation_euler[pyrr.euler.index().roll] = 0.4
-        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 2, 5])
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 2, 5])
 
     ### Invocation des murs adverse
     # On avance selon z
@@ -204,10 +203,10 @@ class ViewerGL:
         x = r.randint(-5,5)
         tr.translation.x = x
         tr.translation.y = 0
-        tr.translation.z = self.objs[0].hitbox[2][2] + 15 ### hitBox 
+        tr.translation.z = self.objs[0].centre[2] + 10 ### hitBox 
         #tr.rotation_center.z = 0.5
         texture = glutils.load_texture('grass.jpg')
-        points= [[-5, 0, 0.5], [5/4, 0, 0.5], [5/4, 2, 0.5], [-5, 2, 0.5], [-5, 0, 0.5], [5/4, 0, 0.5], [5/4, 2, 0.5], [-5, 2, 0.5]]
-        obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, points)
+        centre =[0+tr.translation.x , 0+tr.translation.y , 0+tr.translation.z]
+        obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, centre)
         self.add_obstacle(obstacle)
         #print("J'ai invoqué")
