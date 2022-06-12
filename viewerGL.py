@@ -47,9 +47,10 @@ class ViewerGL:
                 if isinstance(obj, Object3D):
                     # si on est pas le joueur on fait se déplacer l'objet (ce sont les obstacles qui se déplacent)
                     if self.objs.index(obj) != 0 :
-                        pass
-                        #obj.move()
-                        #self.objs[0].collision(obj)
+                        #pass
+                        obj.move()
+                    elif self.objs.index(obj) > 2:
+                        self.objs[0].collision(obj)
                     
                     self.update_camera(obj.program)
                     # on appel la fonction de saut
@@ -107,10 +108,10 @@ class ViewerGL:
     def update_key(self):
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
             self.objs[0].transformation.translation += \
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0.1, 0, 0]))
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0.03, 0, 0]))
         elif glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
             self.objs[0].transformation.translation += \
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([-0.1, 0, 0]))
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([-0.03, 0, 0]))
         
         elif glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.objs[0].transformation.translation += \
