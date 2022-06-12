@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-
+import glutils
 import OpenGL.GL as GL
 import glfw
 import pyrr
 import numpy as np
 from cpe3d import Object3D
 import time
+import random as r
+from mesh import Mesh
+from cpe3d import Object3D, Camera, Transformation3D, Text, decors
 
 class ViewerGL:
     def __init__(self):
@@ -30,15 +33,30 @@ class ViewerGL:
         GL.glClearColor(0.5, 0.6, 0.9, 1.0)
         print(f"OpenGL: {GL.glGetString(GL.GL_VERSION).decode('ascii')}")
 
-        self.objs = []
-        self.touch = {}
-      
+        self.objs = [] # Le joueur et les plateformes
+        self.obs = [] # Les obstacles
+        self.txt = [] # Les textes
+        self.touch = {}     
 
     def run(self):
         # boucle d'affichage
+
+        ## teemps initial
+        temps_init = time.time()
+        #print("temps-init" + str(temps_init))
+
+
         while not glfw.window_should_close(self.window):
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+            
+            ## on recup une valeur de temps et on test si on ajoute un mur
+            d1 = time.time()
+            #print("d1" + str(d1))
+            dlt = r.randint(3,5)
+            if d1 - temps_init > dlt:
+                self.invocation()
+                temps_init = time.time()
 
             self.update_key()
 
@@ -47,15 +65,27 @@ class ViewerGL:
                 if isinstance(obj, Object3D):
                     # si on est pas le joueur on fait se déplacer l'objet (ce sont les obstacles qui se déplacent)
                     if self.objs.index(obj) != 0 :
-                        #pass
                         obj.move()
-                        if self.objs.index(obj) > 2:
-                            self.objs[0].collision(obj)
+                        #self.objs[0].collision(obj)
                     
                     self.update_camera(obj.program)
                     # on appel la fonction de saut
                     obj.action_saut()
                 obj.draw()
+
+            for obj in self.obs:
+                GL.glUseProgram(obj.program)
+                if isinstance(obj, Object3D):
+                    self.update_camera(obj.program)
+                    obj.move()
+                    #avec un if    obj.pop()  # ici on test si on est derriere le joueur pour retirer l'obstacle de la liste
+                obj.draw()
+                
+            for obj in self.txt:
+                GL.glUseProgram(obj.program)
+                if isinstance(obj, Object3D):
+                    self.update_camera(obj.program)
+                    obj.draw()
 
             # changement de buffer d'affichage pour éviter un effet de scintillement
             glfw.swap_buffers(self.window)
@@ -68,8 +98,17 @@ class ViewerGL:
             glfw.set_window_should_close(win, glfw.TRUE)
         self.touch[key] = action
     
+    # Le joueur et les plateformes
     def add_object(self, obj):
         self.objs.append(obj)
+
+    # Les obstacles
+    def add_obstacle(self, obs):
+        self.obs.append(obs)
+
+    # Les textes
+    def add_text(self, obs):
+        self.txt.append(obs)
 
     def set_camera(self, cam):
         self.cam = cam
@@ -108,20 +147,23 @@ class ViewerGL:
     def update_key(self):
         if glfw.KEY_LEFT in self.touch and self.touch[glfw.KEY_LEFT] > 0:
             self.objs[0].transformation.translation += \
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0.03, 0, 0]))
-        elif glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0.1, 0, 0]))
+        if glfw.KEY_RIGHT in self.touch and self.touch[glfw.KEY_RIGHT] > 0:
             self.objs[0].transformation.translation += \
-            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([-0.03, 0, 0]))
-        
-        elif glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
+            pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([-0.1, 0, 0]))
+        if glfw.KEY_UP in self.touch and self.touch[glfw.KEY_UP] > 0:
             self.objs[0].transformation.translation += \
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, 0.1]))
-        
-        elif glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
+        if glfw.KEY_DOWN in self.touch and self.touch[glfw.KEY_DOWN] > 0:
             self.objs[0].transformation.translation += \
             pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.objs[0].transformation.rotation_euler), pyrr.Vector3([0, 0, -0.1]))
+        
+        # retirer le texte quand on veut lancer le jeu
+        if glfw.KEY_ENTER in self.touch and self.touch[glfw.KEY_ENTER] > 0:
+            self.txt.pop()
+            self.txt.pop()
 
-# si on veut controler la caméra avec IJKL
+        # si on veut controler la caméra avec IJKL
         if glfw.KEY_I in self.touch and self.touch[glfw.KEY_I] > 0:
             self.cam.transformation.rotation_euler[pyrr.euler.index().roll] -= 0.1
         if glfw.KEY_K in self.touch and self.touch[glfw.KEY_K] > 0:
@@ -147,7 +189,25 @@ class ViewerGL:
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 1, 10])
         self.cam.transformation.rotation_euler[pyrr.euler.index().roll] = 0.4
-        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 2, 5])
+        self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([-1, 2, 5])
 
+    ### Invocation des murs adverse
+    # On avance selon z
 
-    
+    def invocation(self):
+        program3d_id = glutils.create_program_from_file('shader.vert', 'shader.frag')
+        #print("J'invoque !")
+        m = Mesh.load_obj('obstacle.obj')
+        #m.normalize()
+        #m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 1]))
+        tr = Transformation3D()
+        x = r.randint(-5,5)
+        tr.translation.x = x
+        tr.translation.y = 0
+        tr.translation.z = self.objs[0].hitbox[2][2] + 15 ### hitBox 
+        #tr.rotation_center.z = 0.5
+        texture = glutils.load_texture('grass.jpg')
+        points= [[-5, 0, 0.5], [5/4, 0, 0.5], [5/4, 2, 0.5], [-5, 2, 0.5], [-5, 0, 0.5], [5/4, 0, 0.5], [5/4, 2, 0.5], [-5, 2, 0.5]]
+        obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, points)
+        self.add_obstacle(obstacle)
+        #print("J'ai invoqué")

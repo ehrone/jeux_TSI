@@ -5,36 +5,7 @@ from cpe3d import Object3D, Camera, Transformation3D, Text, decors
 import numpy as np
 import OpenGL.GL as GL
 import pyrr
-
-"""vao = Text.initalize_geometry()
-    texture = glutils.load_texture('fontB.jpg')
-    o = Text('Zebi le', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
-    o = Text('Dinosaure', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)"""
-
-def platforme(x,z,longeur, largeur, viewer, prog):
-    """ Cette fontion sert à génerer une platforme
-    PARAMETRES :
-        entrées :
-            x : le x autour duquel on centre la platforme
-            z : le z de depart de la platforme
-            largeur : largeur de la platforme
-            longeur : longeur de la platforme
-            viewer : objet de class viewer qui gère le monde
-    
-    """
-    m = Mesh()
-    p0, p1, p2, p3 = [-x-largeur/2, 0, z], [x-largeur/2, 0, z], [x-largeur/2, 0, z+longeur], [-x-largeur/2, 0, z+longeur]
-    n, c = [0, 1, 0], [1, 0, 0]
-    # les coordonnes de textures
-    t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
-    m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
-    m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-    texture = glutils.load_texture('grass.jpg')
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), prog, texture, Transformation3D(),z, longeur, largeur)
-    viewer.add_object(o)
-
+import time
 
 def main():
     viewer = ViewerGL()
@@ -50,33 +21,30 @@ def main():
 
     # on recupere les coordonnées de notre cube
     m = Mesh.load_obj('cube.obj')
-    #m.normalize()
     m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 1]))
     tr = Transformation3D()
     tr.translation.y = -np.amin(m.vertices, axis=0)[1]
     tr.translation.z = 0
     tr.rotation_center.z = 0.2
     texture = glutils.load_texture('grass.jpg')
-    points_obj= [ [0,0,0], [-1,0,0], [-1,0,1], [0,0,1], [0,1,0], [-1,1,0], [-1,1,1], [0,1,1]]
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1, points_obj, [0,0,0])
+    points= [ [0,0,0], [1,0,0], [1,0,1], [0,0,1], [0,1,0], [1,1,0], [1,1,1], [0,1,1]]
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1, points)
     viewer.add_object(o)
 
-
-    longeur = 100
-
+    longeur = 50
     largeur = 5
 
     # Première platforme
     m = Mesh()
     p0, p1, p2, p3 = [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur]
-    n, c = [0, 1, 0], [1, 1, 1]
+    n, c = [0, 1, 0], [1, 0, 0]
     # les coordonnes de textures
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-    texture = glutils.load_texture('sol_2.jpg')
+    texture = glutils.load_texture('grass.jpg')
     points= [ [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur], [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur]]
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0, longeur, largeur, points, [0,0,0])
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0, longeur, largeur, points)
     viewer.add_object(o)
 
     # Deuxième platforme
@@ -89,41 +57,17 @@ def main():
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
     texture = glutils.load_texture('grass.jpg')
     points= [[-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2], [-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2]]
-    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur, points, [0,0,0])
+    o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur, points)
     viewer.add_object(o)
 
-    
-    # creation d'un obstacle DEMANDER A MAT COM%MENT IL PLACE SON OBJET
-    # on recupere les coordonnées de notre rectangle
-    m = Mesh.load_obj('obstacle.obj')
-    #m.normalize()
-    m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 1]))
-    tr = Transformation3D()
-    tr.translation.x = 0
-    tr.translation.y = 0
-    tr.translation.z = 70
-    tr.rotation_center.z = 0
-    texture = glutils.load_texture('grass.jpg')
-    """m = Mesh()
-    p0, p1, p2, p3 = [-largeur, 0, 0.5], [largeur/4, 0, 0.5], [largeur/4, 2, 0.5], [-largeur, 2, 0.5]
-    n, c = [0, 1, 0], [1, 1, 1]
-    # les coordonnes de textures
-    t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
-    m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
-    m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)"""
-    texture = glutils.load_texture('mur.jpg')
-    p =[0,0,0,0,0,0,0,0]
-    centre =[0+tr.translation.x , 0+tr.translation.y , 0+tr.translation.z]
-    obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, p, centre)
-    viewer.add_object(obstacle) 
-
+    """"
     vao = Text.initalize_geometry()
     texture = glutils.load_texture('fontB.jpg')
-    o = Text('Zebi le', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
-    o = Text('Dinosaure', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
-    viewer.add_object(o)
-
+    o = Text('Bob le', np.array([-0.8, 0.3], np.float32), np.array([0.8, 0.8], np.float32), vao, 2, programGUI_id, texture)
+    viewer.add_text(o)
+    o = Text('Cube', np.array([-0.5, -0.2], np.float32), np.array([0.5, 0.3], np.float32), vao, 2, programGUI_id, texture)
+    viewer.add_text(o)
+    """
 
     viewer.run()
 
