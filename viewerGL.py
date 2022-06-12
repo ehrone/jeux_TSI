@@ -49,8 +49,8 @@ class ViewerGL:
                     if self.objs.index(obj) != 0 :
                         #pass
                         obj.move()
-                    elif self.objs.index(obj) > 2:
-                        self.objs[0].collision(obj)
+                        if self.objs.index(obj) > 2:
+                            self.objs[0].collision(obj)
                     
                     self.update_camera(obj.program)
                     # on appel la fonction de saut

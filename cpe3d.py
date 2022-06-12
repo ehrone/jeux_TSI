@@ -88,11 +88,11 @@ class Object3D(Object):
         y_obstacle = [obj.centre[1], obj.centre[1]+obj.delta_y]
         z_obstacle = [obj.centre[2], obj.centre[2]+obj.delta_z]
 
-        print(' joueur : ', x)
-        print(' obstacle : ', x_obstacle)
+        #print(' joueur : ', x)
+        #print(' obstacle : ', x_obstacle)
         
         if (x[0] >= x_obstacle[0] and x[0]<= x_obstacle[1]) or (x[0] <= x_obstacle[0] and x[0]>= x_obstacle[1]) or (x[1] >= x_obstacle[0] and x[1]<= x_obstacle[1]) or (x[1] <= x_obstacle[0] and x[1]>= x_obstacle[1]) :# on regarde si il y a collision sur les x
-            print(" coin : x sur l'obstacle ")
+            #print(" coin : x sur l'obstacle ")
             if (float(z[0])>= z_obstacle[0] and z[0]<= z_obstacle[1]) or (z[1]>= z_obstacle[0] and z[1]<= z_obstacle[1]) :
                 print(" collision ")
            
