@@ -27,14 +27,15 @@ def main():
     tr.translation.y = -np.amin(m.vertices, axis=0)[1]
     tr.translation.z = 0
     tr.rotation_center.z = 0.2
-    texture = glutils.load_texture('grass.jpg')
+    texture = glutils.load_texture('mur.jpg')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr,0, 1,1, [0,0,0])
+    o.transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi / 2
     viewer.add_object(o)
 
-    longeur = 50
-    largeur = 5
+    longeur = 100
+    largeur = 2
 
-    # Mur de fond 
+    # Mur de fond
     m = Mesh()
     p0, p1, p2, p3 = [-70, -70, 50], [70, -70, 50], [70, 70, 50], [-70, 70, 50]
     n, c = [0, 1, 0], [1, 1, 1]
@@ -42,7 +43,7 @@ def main():
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-    texture = glutils.load_texture('fond_1.jpg')
+    texture = glutils.load_texture('paysage.jpg')
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur, [0,0,0])
     viewer.add_text(o)
 
@@ -54,7 +55,7 @@ def main():
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-    texture = glutils.load_texture('sol_2.jpg')
+    texture = glutils.load_texture('routeDessin.png')
     points= [ [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur], [-largeur, 0, -2], [largeur, 0, -2], [largeur, 0, longeur], [-largeur, 0, longeur]]
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),0, longeur, largeur, points)
     viewer.add_object(o)
@@ -67,7 +68,7 @@ def main():
     t0, t1, t2, t3 = [0, 0], [1, 0], [1, 1], [0, 1]
     m.vertices = np.array([[p0 + n + c + t0], [p1 + n + c + t1], [p2 + n + c + t2], [p3 + n + c + t3]], np.float32)
     m.faces = np.array([[0, 1, 2], [0, 2, 3]], np.uint32)
-    texture = glutils.load_texture('sol_2.jpg')
+    texture = glutils.load_texture('routeDessin.png')
     points= [[-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2], [-largeur, 0, longeur], [largeur, 0, longeur], [largeur, 0, (longeur)*2], [-largeur, 0, (longeur)*2]]
     o = Object3D(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, Transformation3D(),longeur, longeur, largeur, points)
     viewer.add_object(o)
