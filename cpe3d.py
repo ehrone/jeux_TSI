@@ -1,3 +1,4 @@
+from pickle import FALSE, TRUE
 import OpenGL.GL as GL
 import pyrr, time
 import numpy as np 
@@ -58,7 +59,6 @@ class Object3D(Object):
         self.delta_x = -1
         self.delta_y = 1
         self.delta_z = 1
-      
 
     def update_center(self):
         self.centre = [self.transformation.translation.x, self.transformation.translation.y, self.transformation.translation.z]
@@ -172,10 +172,10 @@ class Object3D(Object):
 
 # Cette classe est utilisé pou créer les obstacles
 class decors(Object3D):
-    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur, centre):
+    def __init__(self, vao, nb_triangle, program, texture, transformation,z, longeur, largeur, centre,vel):
         super().__init__(vao, nb_triangle, program, texture,transformation,z,longeur,largeur, centre )
         self.transformation = transformation 
-        self.vel = -0.3
+        self.vel = vel
 
         self.delta_x = -2
         self.delta_y =1
@@ -183,11 +183,9 @@ class decors(Object3D):
 
     def move(self):
         self.transformation.translation +=\
-        pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([0, 0, self.vel]))
+        pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(self.transformation.rotation_euler), pyrr.Vector3([-self.vel, 0, 0]))
         self.z += self.vel
-        if self.z < -10 :
-            return -1
-
+        return self.z < -50
 
 
 

@@ -34,9 +34,16 @@ class ViewerGL:
         print(f"OpenGL: {GL.glGetString(GL.GL_VERSION).decode('ascii')}")
 
         self.objs = [] # Le joueur et les plateformes
-        self.obs = [] # Les obstacles
+        self.obs = [] # Les obstacles qui bougent
+        self.att = [] # Les voitures en attente
         self.txt = [] # Les textes
         self.touch = {}     
+
+        self.vel = -0.3
+
+    def lesVoituresBougent(self):
+        laVoiture = self.att.pop()
+        self.add_obstacle(laVoiture)
 
     def run(self):
         # boucle d'affichage
@@ -45,17 +52,30 @@ class ViewerGL:
         temps_init = time.time()
         #print("temps-init" + str(temps_init))
 
+        self.invocation() # on invoque les objets voitures 
 
         while not glfw.window_should_close(self.window):
             # nettoyage de la fenêtre : fond et profondeur
             GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
             
+            self.vel = self.vel * 1.0001
+
             ## on recup une valeur de temps et on test si on ajoute un mur
             d1 = time.time()
             #print("d1" + str(d1))
-            dlt = r.randint(3,5)
+            #dlt = r.randint(1,2)
+            dlt = -0.2 / self.vel
             if d1 - temps_init > dlt:
-                self.invocation()
+                self.lesVoituresBougent()
+                print(len(self.obs))
+                if len(self.obs)>8:
+                    print('on est ici')
+                    voitureArrivee = self.obs.pop(0)
+                    voitureArrivee.transformation.translation += \
+                    pyrr.matrix33.apply_to_vector(pyrr.matrix33.create_from_eulers(voitureArrivee.transformation.rotation_euler), pyrr.Vector3([50, 0, 0]))
+                    voitureArrivee.z +=50
+                    self.att.append(voitureArrivee)
+                    self.add_attente(voitureArrivee)
                 temps_init = time.time()
             self.update_key()
             for obj in self.objs:
@@ -75,13 +95,8 @@ class ViewerGL:
                 GL.glUseProgram(obj.program)
                 if isinstance(obj, Object3D):
                     self.update_camera(obj.program)
-                    vie = obj.move()
-                    if vie == -1:
-                        self.obs.pop(0)
-                        print('obstacle hors liste ')
-
-                    else:
-                        self.objs[0].collision(obj, self.obs.index(obj))
+                    print(len(self.obs))
+                    obj.move()
                     #avec un if    obj.pop()  # ici on test si on est derriere le joueur pour retirer l'obstacle de la liste
                 obj.draw()
                 
@@ -109,6 +124,10 @@ class ViewerGL:
     # Les obstacles
     def add_obstacle(self, obs):
         self.obs.append(obs)
+
+    # Les obstacles en attente
+    def add_attente(self, obs):
+        self.att.append(obs)
 
     # Les textes
     def add_text(self, obs):
@@ -188,7 +207,7 @@ class ViewerGL:
         # on la fait tourner de autant que l'on fait tourner l'objet
 
         self.cam.transformation.rotation_euler = self.objs[0].transformation.rotation_euler.copy() 
-        self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] += np.pi
+        self.cam.transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi/2
         # on recentre la camera sur l'objet
         self.cam.transformation.rotation_center = self.objs[0].transformation.translation + self.objs[0].transformation.rotation_center
         self.cam.transformation.translation = self.objs[0].transformation.translation + pyrr.Vector3([0, 1, 10])
@@ -199,19 +218,20 @@ class ViewerGL:
     # On avance selon z
 
     def invocation(self):
-        program3d_id = glutils.create_program_from_file('shader.vert', 'shader.frag')
-        #print("J'invoque !")
-        m = Mesh.load_obj('obstacle.obj')
-        #m.normalize()
-        #m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 1]))
-        tr = Transformation3D()
-        x = r.randint(-5,5)
-        tr.translation.x = x
-        tr.translation.y = 0
-        tr.translation.z = self.objs[0].centre[2] + 10 ### hitBox 
-        #tr.rotation_center.z = 0.5
-        texture = glutils.load_texture('grass.jpg')
-        centre =[0+tr.translation.x , 0+tr.translation.y , 0+tr.translation.z]
-        obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, centre)
-        self.add_obstacle(obstacle)
-        #print("J'ai invoqué")
+        for i in range (10):
+            program3d_id = glutils.create_program_from_file('shader.vert', 'shader.frag')
+            #print("J'invoque !")
+            m = Mesh.load_obj('car.obj')
+            m.apply_matrix(pyrr.matrix44.create_from_scale([1, 1, 1, 1]))
+            m.normalize()
+            tr = Transformation3D()
+            x = r.randint(-2,1)
+            tr.translation.x = x+0.5
+            tr.translation.y = -np.amin(m.vertices, axis=0)[1]
+            tr.translation.z = self.objs[0].centre[2] + 50 ### hitBox 
+            #tr.rotation_center.z = 0.5
+            texture = glutils.load_texture('sol_1.jpg')
+            centre =[0+tr.translation.x , 0+tr.translation.y , 0+tr.translation.z]
+            obstacle = decors(m.load_to_gpu(), m.get_nb_triangles(), program3d_id, texture, tr ,0,0,0, centre,self.vel)
+            obstacle.transformation.rotation_euler[pyrr.euler.index().yaw] -= np.pi / 2
+            self.add_attente(obstacle)
